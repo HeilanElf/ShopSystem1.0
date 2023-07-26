@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Menu {
-    private final String basePath = System.getProperty("user.dir") + "\\src\\main\\java\\org\\example\\";
+    private final String basePath = System.getProperty("user.dir") + "//src//main//java//org//example//";
 
     public void clear(){
         try {
