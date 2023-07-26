@@ -38,14 +38,4 @@ public class Menu {
     public void showMaster(){showFileContent("MasterHome.txt");}
 
     public void showpasswordMaster(){showFileContent("passwordMaster.txt");}
-
-    public void showuserMaster(){showFileContent("userMaster.txt");}
-
-    public void showductionMaster(){showFileContent("ductionMaster.txt");}
-
-    public void showUser(){showFileContent("UserHome.txt");}
-
-    public void showpasswordUser(){showFileContent("passwordUser.txt");}
-
-    public void showShopUser(){showFileContent("ShopUser.txt");}
 }
