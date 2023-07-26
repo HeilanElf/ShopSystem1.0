@@ -6,6 +6,12 @@ public class Master {
     public void passwordMaster(int command){
 
     }
+    public void userMaster(int command){
+
+    }
+    public void ductionMaster(int command){
+
+    }
     public void master(int command){
         while(true){
             if (command==0){
@@ -25,8 +31,28 @@ public class Master {
                         }
                         break;
                     case 2:
+                        while(true){
+                            menu.showuserMaster();
+                            System.out.print("请输入您的选择：");
+                            command=isTrueEnter.inthefa(2);
+                            if(command==0){
+                                break;
+                            }else{
+                                userMaster(command);
+                            }
+                        }
                         break;
                     case 3:
+                        while(true){
+                            menu.showductionMaster();
+                            System.out.print("请输入您的选择：");
+                            command=isTrueEnter.inthefa(2);
+                            if(command==0){
+                                break;
+                            }else{
+                                ductionMaster(command);
+                            }
+                        }
                         break;
                 }
             }
@@ -37,5 +63,11 @@ public class Master {
     }
 }
 class PasswordMaster{
+
+}
+class UserMaster{
+
+}
+class DuctionMaster{
 
 }

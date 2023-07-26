@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Menu {
-    private final String basePath = System.getProperty("user.dir") + "\\src\\main\\java\\org\\example\\";
+    private final String basePath = System.getProperty("user.dir") + "//src//main//java//org//example//text//";
 
     public void clear(){
         try {
@@ -38,4 +38,14 @@ public class Menu {
     public void showMaster(){showFileContent("MasterHome.txt");}
 
     public void showpasswordMaster(){showFileContent("passwordMaster.txt");}
+
+    public void showuserMaster(){showFileContent("userMaster.txt");}
+
+    public void showductionMaster(){showFileContent("ductionMaster.txt");}
+
+    public void showUser(){showFileContent("UserHome.txt");}
+
+    public void showpasswordUser(){showFileContent("passwordUser.txt");}
+
+    public void showShopUser(){showFileContent("ShopUser.txt");}
 }

@@ -23,7 +23,10 @@ public class Main {
                         master.master(command);
                         break;
                     case 2:
-
+                        menu.showUser();
+                        System.out.print("请输入您的选择：");
+                        command=isTrueEnter.inthefa(3);
+                        user.user(command);
                         break;
                 }
             }
