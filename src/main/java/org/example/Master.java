@@ -86,6 +86,7 @@ public class Master {
                                 break;
                             }else{
                                 passwordMaster(command);
+                                menu.consoleDelay();
                             }
                         }
                         break;
@@ -98,6 +99,7 @@ public class Master {
                                 break;
                             }else{
                                 userMaster(command);
+                                menu.consoleDelay();
                             }
                         }
                         break;
@@ -110,6 +112,7 @@ public class Master {
                                 break;
                             }else{
                                 ductionMaster(command);
+                                menu.consoleDelay();
                             }
                         }
                         break;

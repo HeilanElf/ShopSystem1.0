@@ -19,6 +19,13 @@ public class Menu {
             e.printStackTrace();
         }
     }
+    public void consoleDelay(){
+        try {
+            Thread.sleep(1000); // 延迟三秒
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void showFileContent(String fileName) {
         clear();
