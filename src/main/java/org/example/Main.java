@@ -5,7 +5,7 @@ public class Main {
         Master master=new Master();
         Menu menu=new Menu();
         User user=new User();
-        LogIn logIn=new LogIn();
+      //  LogIn logIn=new LogIn();
         IsTrueEnter isTrueEnter=new IsTrueEnter();
 
         menu.showHome();
