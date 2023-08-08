@@ -56,5 +56,7 @@ public class Menu {
 
     public void showUser() {showFileContent("UserHome.txt");}
 
+    public void showSearchStyle(){showFileContent("SearchStyle.txt");}
+
     
 }

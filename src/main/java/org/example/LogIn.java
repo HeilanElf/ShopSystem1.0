@@ -3,11 +3,15 @@ package org.example;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class LogIn {
     private final String basePath = System.getProperty("user.dir") + "//src//main//java//org//example//text//";
     Scanner scanner=new Scanner(System.in);
+    IsTrueEnter isTrueEnter=new IsTrueEnter();
+    Regest regest=new Regest();
     String filePath;
     public  String encryptPassword(String password) {
         try {
@@ -26,11 +30,37 @@ public class LogIn {
         String encryptedPassword = encryptPassword(password);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             String userInfo = username + "," + encryptedPassword;
-            writer.write(userInfo);
             writer.newLine();
-            System.out.println("注册成功！");
+            writer.write(userInfo);
         } catch (IOException e) {
             System.out.println("注册失败: " + e.getMessage());
+        }
+    }
+    public boolean modifyUserPassword(String filePath, String username, String password){
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            StringBuilder fileContentBuilder = new StringBuilder();
+            String line;
+            // 读取文件并清空对应的用户字段
+            while ((line = reader.readLine()) != null) {
+                String[] userInfo = line.split(",");
+                String fileUsername = userInfo[0];
+                if (fileUsername.equals(username)) {
+                    line = fileUsername +","+ encryptPassword(password);
+                }
+                fileContentBuilder.append(line).append(System.lineSeparator());
+            }
+
+            reader.close();
+
+            // 将清空后的内容保存回文本文件
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(fileContentBuilder.toString());
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("系统错误: " + e.getMessage());
+            return false;
         }
     }
     public boolean isMatch(String filePath, String name, String password) {
@@ -39,12 +69,11 @@ public class LogIn {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userInfo = line.split(",");
-                if (userInfo.length == 1) {
+                if (userInfo.length == 1&&userInfo[0].equals(name)) {
                     System.out.println("账户密码被管理员(主管）重置过！");
-                    System.out.print("请确认密码：");
-                    String newpass = scanner.nextLine();
-                    registerUser(filePath, name, newpass);
-                    return true;
+                    System.out.print("请确认新密码：");
+                    password= isTrueEnter.passwordhefa(scanner.next());
+                    return modifyUserPassword(filePath,name,password);
                 } else {
                     if (name.equals(userInfo[0]) && encryptedPassword.equals(userInfo[1])) {
                         return true;
@@ -73,76 +102,135 @@ public class LogIn {
     }
     public int userSign(int command) {
         int count = 0;
-        System.out.print("用户名：");
-        String userName = scanner.next();
-        System.out.print("密码：");
-        String password = scanner.next();
+        String userName;
+        String password;
         if (command==1){
+            System.out.print("请输入您的用户名：");
+            userName= scanner.next();
+            System.out.print("请输入您的密码：");
+            password = scanner.next();
             filePath=basePath+"MasterData.txt";
+            boolean userExists = userExists(filePath, userName);
+            if(!userExists){
+                System.out.print("管理员不存在！");
+            }else{
+                while (!isMatch(filePath, userName, password) && count < 5) {
+                    count++;
+                    if (command == 1) {
+                        System.out.println("管理员不存在或密码错误！");
+                        System.out.print("用户名：");
+                        userName = scanner.next();
+                        System.out.print("密码：");
+                        password = isTrueEnter.passwordhefa(scanner.next());
+                    }
+                }
+            }
         }
         if (command == 2) {
+            System.out.print("请输入用户名：");
+            userName = scanner.nextLine();
+            System.out.print("请输入密码：");
+            password = isTrueEnter.passwordhefa(scanner.next());
             filePath = basePath + "UserData.txt";
+            boolean userExists = userExists(filePath, userName);
+            if (!userExists) {
+                System.out.print("用户不存在！是否需要注册？Yes/No:");
+                String choice = scanner.next();
+                while(true){
+                    if (choice.equalsIgnoreCase("Yes")) {
+                        registerUser(filePath, userName, password);
+                        regest.userRegest();
+                        break;
+                    } else if(choice.equalsIgnoreCase("No")){
+                        System.out.println("登录失败！");
+                        count=10;
+                        break;
+                    }  else{
+                        System.out.print("输入非法，请重新输入：");
+                        choice = scanner.next();
+                    }
+                }
+            }else {
+                while (!isMatch(filePath, userName, password) && count < 5) {
+                    count++;
+                    if(command==1){
+                        System.out.println("管理员不存在或密码错误！");
+                        System.out.print("用户名：");
+                        userName = scanner.next();
+                        System.out.print("密码：");
+                        password = isTrueEnter.passwordhefa(scanner.next());
+                    }
+                    if(command==2){
+                        System.out.println("用户名或密码错误！");
+                        System.out.print("用户名：");
+                        userName = scanner.next();
+                        System.out.print("密码：");
+                        password = isTrueEnter.passwordhefa(scanner.next());
+                    }
+                }
+            }
         }
-        boolean userExists = userExists(filePath, userName);
-        if (!userExists && command==2) {
-            System.out.println("用户不存在！是否自动注册？Yes/No:");
-            String choice = scanner.next();
-            while(true){
-                if (choice.equalsIgnoreCase("Yes")) {
-                    registerUser(filePath, userName, password);
-                    break;
-                } else if(choice.equals("No")){
-                    System.out.println("登录失败！");
-                    break;
-                }  else{
-                    System.out.print("输入非法，请重新输入：");
-                    choice = scanner.next();
-                }
-            }
+        if (count >= 5) {
+            System.out.println("由于您多次失败，请稍后再试！");
         } else {
-            while (!isMatch(filePath, userName, password) && count < 3) {
-                count++;
-                if(command==1){
-                    System.out.println("管理员不存在或密码错误！");
-                    System.out.print("用户名：");
-                    userName = scanner.next();
-                    System.out.print("密码：");
-                    password = scanner.next();
-                }
-                if(command==2){
-                    System.out.println("用户名或密码错误！");
-                    System.out.print("用户名：");
-                    userName = scanner.next();
-                    System.out.print("密码：");
-                    password = scanner.next();
-                }
-
-            }
-            if (count >= 5) {
-                System.out.println("由于您多次失败，请稍后再试！");
-            } else {
-                System.out.println("登录成功！");
-            }
+            System.out.println("登录成功！");
         }
         return count;
     }
-    public int sign(int command) {
-        int count = 0;
-        if (command == 1) {
-            filePath = basePath + "MasterData.txt";
-        } else if (command == 2) {
-            filePath = basePath + "UserData.txt";
+}
+class Regest{
+    private final String DATA_FOLDER=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+    private long idCounter=1;
+    public void userRegest(){
+        String userName = getInput("请输入用户名：");
+        String phoneNumber = getInput("请输入手机号：");
+        String email = getInput("请输入邮箱：");
+
+        // 创建用户ID
+        String userID = createUserID();
+
+        // 创建 userData 文件夹（如果不存在）
+        createDataFolder();
+
+        // 检查 userData 文件夹下是否存在重名的文件
+        File file = new File(DATA_FOLDER + "\\" + userID + ".txt");
+        while (file.exists()) {
+            userID = createUserID();
+            file = new File(DATA_FOLDER + "\\" + userID + ".txt");
         }
-        if (command == 2) {
-            System.out.println("欢迎成为商品管理系统新用户！");
-            System.out.print("请输入用户名：");
-            String userName = scanner.nextLine();
-            System.out.print("请输入密码：");
-            String password = scanner.nextLine();
-            registerUser(filePath, userName, password);
-        } else {
-            count = userSign(2);
+
+        try {
+            // 创建 txt 文件并写入用户信息
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write(userID + "," + userName + ",铜牌客户," + getCurrentDateTime() + ",0," + phoneNumber + "," + email);
+            writer.newLine();
+            writer.close();
+
+            System.out.println("注册成功！已自动为您登录");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return count;
+    }
+    private  String getInput(String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(prompt);
+        return scanner.nextLine().trim();
+    }
+
+    private  String createUserID() {
+        return String.format("%04d", idCounter++);
+    }
+
+    private  void createDataFolder() {
+        File folder = new File(DATA_FOLDER);
+        if (!folder.exists() || !folder.isDirectory()) {
+            folder.mkdir();
+        }
+    }
+
+    private  String getCurrentDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
     }
 }

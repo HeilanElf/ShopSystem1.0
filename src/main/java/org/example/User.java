@@ -12,15 +12,13 @@ public class User {
     public void shopUser(){
 
     }
-    public void user(int command){
+    public void user(int command,boolean susucessLoin){
         while(true){
             if(command==0){
                 break;
             }else{
                 switch(command){
                     case 1:
-                        break;
-                    case 2:
                         while(true){
                             menu.showpasswordUser();
                             System.out.print("请输入您的选择：");
@@ -32,7 +30,7 @@ public class User {
                             }
                         }
                         break;
-                    case 3:
+                    case 2:
                         while(true) {
                             menu.showShopUser();
                             System.out.print("请输入您的选择：");
