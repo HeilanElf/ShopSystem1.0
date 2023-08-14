@@ -64,8 +64,6 @@ public class Master {
         }
     }
     public void userMaster(int command){
-        String basePath1=System.getProperty("user.dir")+"//src//main//java//org//example//userData//";
-        String filePath=basePath+"UserData.txt";
         if(command==1){
             userMaster.showUserData();
             System.out.println("是否返回上一级菜单？请按任意键继续..");
