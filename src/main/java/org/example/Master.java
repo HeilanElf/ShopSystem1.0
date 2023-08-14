@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Master {
@@ -90,13 +91,13 @@ public class Master {
                         case 1:
                             System.out.print("请输入用户ID：");
                             String userID=scanner.next();
-                            userMaster.showUserData();
+                            userMaster.searchUserData(userID,"ID");
                             menu.consoleDelay();
                             break;
                         case 2:
                             System.out.print("请输入用户名：");
                             String username=scanner.next();
-                            userMaster.showUserData();
+                            userMaster.searchUserData(username,"Name");
                             menu.consoleDelay();
                             break;
                         case 3:
@@ -113,6 +114,22 @@ public class Master {
     }
     public void ductionMaster(int command){
 
+        if(command==1){
+            ductionMaster.showDuctionInfo();
+        }
+        if(command==2){
+            ductionMaster.addDuctionInfo();
+        }
+        if(command==3){
+            ductionMaster.modifyDuctionInfo();
+        }
+        if(command==4){
+            ductionMaster.deleteDuctionInfo();
+        }
+        if(command==5){
+            ductionMaster.searchDuctionInfo();
+        }
+        menu.consoleDelay();
     }
     public void master(int command){
         while(true){
@@ -327,7 +344,7 @@ class UserMaster{
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles(); // 获取文件夹下所有文件
             if (files == null) {
-                System.out.println("用户为空！");
+                System.out.println("用户列表为空！");
                 return;
             }
             for (File file : files) {
@@ -354,24 +371,392 @@ class UserMaster{
         }
 
     }
-    public void searchUserData(){
+    public void searchID(String key){
+        String userID=key+".txt";
+        String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+        String filePath=folderPath+userID;
+        File folder = new File(folderPath);
+        boolean find=false;
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles(); // 获取文件夹下所有文件
+            if (files == null) {
+                System.out.println("用户列表为空！");
+                return;
+            }
+            for (File file : files) {
+                if (file.isFile() && file.getName().equals(userID)) { // 判断文件名是否匹配
+                    find=true;
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        String line = reader.readLine();
+                        if (line != null) {
+                            String[] userInfo = line.split(",");
+                            if (userInfo.length == 7) {
+                                String userID1 = userInfo[0].trim();
+                                String userName = userInfo[1].trim();
+                                String userLevel = userInfo[2].trim();
+                                String registrationTime = userInfo[3].trim();
+                                String totalConsumption = userInfo[4].trim();
+                                String phoneNumber = userInfo[5].trim();
+                                String email = userInfo[6].trim();
 
+                                String output = "客户ID:" + userID1 + " 用户名:" + userName + " 用户级别:" + userLevel +
+                                        " 用户注册时间:" + registrationTime + " 客户累计消费总金额:" + totalConsumption + " 用户手机号:" +
+                                        phoneNumber + " 用户邮箱:" + email;
+                                System.out.println(output);
+                            } else {
+                                System.out.println("文件" + userID + "的内容格式不正确！");
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if(!find){
+                System.out.println("该用户不存在！");
+            }
+        } else {
+            System.out.println("系统错误！");
+        }
+    }
+    public void serachName(String key){
+        String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+        File folder = new File(folderPath);
+        boolean find=false;
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles(); // 获取文件夹下所有文件
+            if (files == null) {
+                System.out.println("用户列表为空！");
+                return;
+            }
+            for (File file : files) {
+                if (file.isFile() &&file.getName().toLowerCase().endsWith(".txt")) { // 判断文件名是否匹配
+                    String fileName=file.getName();
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        String line = reader.readLine();
+                        if (line != null) {
+                            String[] userInfo = line.split(",");
+                            if (userInfo.length == 7) {
+                                String userID1 = userInfo[0].trim();
+                                String userName = userInfo[1].trim();
+                                String userLevel = userInfo[2].trim();
+                                String registrationTime = userInfo[3].trim();
+                                String totalConsumption = userInfo[4].trim();
+                                String phoneNumber = userInfo[5].trim();
+                                String email = userInfo[6].trim();
+
+                                String output = "客户ID:" + userID1 + " 用户名:" + userName + " 用户级别:" + userLevel +
+                                        " 用户注册时间:" + registrationTime + " 客户累计消费总金额:" + totalConsumption + " 用户手机号:" +
+                                        phoneNumber + " 用户邮箱:" + email;
+                                if(userName.equalsIgnoreCase(key)){
+                                    System.out.println(output);
+                                    find=true;
+                                }
+                            } else {
+                                System.out.println("文件" + fileName + "的内容格式不正确！");
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if(!find){
+                System.out.println("该用户不存在！");
+            }
+        } else {
+            System.out.println("系统错误！");
+        }
+    }
+
+    public void searchUserData(String value,String kinds){
+        if(kinds.equalsIgnoreCase("ID")){
+            searchID(value);
+        }
+        if(kinds.equalsIgnoreCase("Name")){
+            serachName(value);
+        }
     }
 }
 class DuctionMaster{
-    public void showDuctionInfo(){
+    IsTrueEnter isTrueEnter=new IsTrueEnter();
+    String basePath1=System.getProperty("user.dir")+"//src//main//java//org//example//text//";
+    private  final String FILE_PATH=basePath1+"ductions.txt";
+    Scanner scanner = new Scanner(System.in);
+    public List<String> readProductsFromFile() {
+        List<String> productList = new ArrayList<>();
+        File file = new File(FILE_PATH);
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                productList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return productList;
+    }
+
+    public  void writeProductToFile(String productInfo) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            writer.write(productInfo);
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  void writeProductsToFile(List<String> productList) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String productInfo : productList) {
+                writer.write(productInfo);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void showDuctionInfo(){
+        List<String> productList = readProductsFromFile();
+
+        if (productList.isEmpty()) {
+            System.out.println("没有商品信息。");
+        } else {
+            System.out.println("商品信息：");
+            for (String productInfo : productList) {
+                String[] parts = productInfo.split(",");
+                String output="商品编号: " + parts[0]+" 商品名称: " + parts[1]+" 生产厂家: " + parts[2]+" 生产日期: " + parts[3]+
+                        " 型号: " + parts[4]+" 进货价: " + parts[5]+" 零售价格: " + parts[6]+" 数量: " + parts[7];
+                System.out.println(output);
+            }
+        }
     }
     public void addDuctionInfo(){
+        System.out.print("请输入商品编号：");
+        String id = scanner.nextLine();
+        System.out.print("请输入商品名称：");
+        String name = scanner.nextLine();
+        System.out.print("请输入生产厂家：");
+        String manufacturer = scanner.nextLine();
+        System.out.print("请输入生产日期：");
+        String productionDate = scanner.nextLine();
+        System.out.print("请输入型号：");
+        String model = scanner.nextLine();
+        System.out.print("请输入进货价：");
+        double purchasePrice = scanner.nextDouble();
+        System.out.print("请输入零售价格：");
+        double retailPrice = scanner.nextDouble();
+        System.out.print("请输入数量：");
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // 清空输入缓冲区
 
+        String productInfo = String.format("%s,%s,%s,%s,%s,%.2f,%.2f,%d", id, name, manufacturer,
+                productionDate, model, purchasePrice, retailPrice, quantity);
+        writeProductToFile(productInfo);
+
+        System.out.println("商品信息已添加。");
     }
     public void modifyDuctionInfo(){
+        System.out.print("请输入要修改的商品编号：");
+        String id = scanner.nextLine();
 
+        List<String> productList = readProductsFromFile();
+        boolean found = false;
+
+        for (int i = 0; i < productList.size(); i++) {
+            String productInfo = productList.get(i);
+            String[] parts = productInfo.split(",");
+            if (parts[0].equals(id)) {
+                System.out.println("原商品信息：" + productInfo);
+
+                System.out.print("请输入新的商品名称（不修改请直接回车）：");
+                String newName = scanner.nextLine();
+                if (!newName.isEmpty()) {
+                    parts[1] = newName;
+                }
+
+                System.out.print("请输入新的生产厂家（不修改请直接回车）：");
+                String newManufacturer = scanner.nextLine();
+                if (!newManufacturer.isEmpty()) {
+                    parts[2] = newManufacturer;
+                }
+
+                System.out.print("请输入新的生产日期（不修改请直接回车）：");
+                String newProductionDate = scanner.nextLine();
+                if (!newProductionDate.isEmpty()) {
+                    parts[3] = newProductionDate;
+                }
+
+                System.out.print("请输入新的型号（不修改请直接回车）：");
+                String newModel = scanner.nextLine();
+                if (!newModel.isEmpty()) {
+                    parts[4] = newModel;
+                }
+
+                System.out.print("请输入新的进货价（不修改请直接回车）：");
+                String newPurchasePriceStr = scanner.nextLine();
+                if (!newPurchasePriceStr.isEmpty()) {
+                    double newPurchasePrice = Double.parseDouble(newPurchasePriceStr);
+                    parts[5] = String.format("%.2f", newPurchasePrice);
+                }
+
+                System.out.print("请输入新的零售价格（不修改请直接回车）：");
+                String newRetailPriceStr = scanner.nextLine();
+                if (!newRetailPriceStr.isEmpty()) {
+                    double newRetailPrice = Double.parseDouble(newRetailPriceStr);
+                    parts[6] = String.format("%.2f", newRetailPrice);
+                }
+
+                System.out.print("请输入新的数量（不修改请直接回车）：");
+                String newQuantityStr = scanner.nextLine();
+                if (!newQuantityStr.isEmpty()) {
+                    int newQuantity = Integer.parseInt(newQuantityStr);
+                    parts[7] = String.valueOf(newQuantity);
+                }
+
+                productInfo = String.join(",", parts);
+                productList.set(i, productInfo);
+                found = true;
+
+                writeProductsToFile(productList);
+
+                System.out.println("商品信息已修改。");
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("未找到商品编号为 " + id + " 的商品。");
+        }
     }
     public void deleteDuctionInfo(){
+        System.out.print("请输入要删除的商品编号：");
+        String id = scanner.nextLine();
 
+        List<String> productList = readProductsFromFile();
+        boolean found = false;
+
+        for (int i = 0; i < productList.size(); i++) {
+            String productInfo = productList.get(i);
+            String[] parts = productInfo.split(",");
+            if (parts[0].equals(id)) {
+                System.out.println("商品信息：" + productInfo);
+
+                System.out.print("确认要删除该商品吗？（Y/N）：");
+                String confirmation = scanner.nextLine();
+                if (confirmation.equalsIgnoreCase("Y")) {
+                    productList.remove(i);
+                    writeProductsToFile(productList);
+
+                    System.out.println("商品已删除。");
+                } else {
+                    System.out.println("取消删除操作。");
+                }
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("未找到商品编号为 " + id + " 的商品。");
+        }
     }
     public void searchDuctionInfo(){
+        System.out.println("请选择查询方式：");
+        System.out.println("(1) 根据商品名称查询");
+        System.out.println("(2) 根据生产厂家查询");
+        System.out.println("(3) 根据零售价格查询");
+        System.out.println("(4) 组合查询");
 
+        System.out.print("请选择操作：");
+        int choice = isTrueEnter.inthefa(4);
+        List<String> productList = readProductsFromFile();
+        List<String> searchResults = new ArrayList<>();
+
+        switch (choice) {
+            case 1:
+                System.out.print("请输入商品名称：");
+                String name = scanner.nextLine();
+
+                for (String productInfo : productList) {
+                    String[] parts = productInfo.split(",");
+                    if (parts[1].equals(name)) {
+                        searchResults.add(productInfo);
+                    }
+                }
+
+                break;
+            case 2:
+                System.out.print("请输入生产厂家：");
+                String manufacturer = scanner.nextLine();
+
+                for (String productInfo : productList) {
+                    String[] parts = productInfo.split(",");
+                    if (parts[2].equals(manufacturer)) {
+                        searchResults.add(productInfo);
+                    }
+                }
+
+                break;
+            case 3:
+                System.out.print("请输入零售价格下限：");
+                double minRetailPrice = scanner.nextDouble();
+                scanner.nextLine(); // 清空输入缓冲区
+
+                System.out.print("请输入零售价格上限：");
+                double maxRetailPrice = scanner.nextDouble();
+                scanner.nextLine(); // 清空输入缓冲区
+
+                for (String productInfo : productList) {
+                    String[] parts = productInfo.split(",");
+                    double retailPrice = Double.parseDouble(parts[6]);
+                    if (retailPrice >= minRetailPrice && retailPrice <= maxRetailPrice) {
+                        searchResults.add(productInfo);
+                    }
+                }
+
+                break;
+            case 4:
+                System.out.print("请输入商品名称：");
+                name = scanner.nextLine();
+
+                System.out.print("请输入生产厂家：");
+                manufacturer = scanner.nextLine();
+
+                System.out.print("请输入零售价格下限：");
+                minRetailPrice = scanner.nextDouble();
+                scanner.nextLine(); // 清空输入缓冲区
+
+                System.out.print("请输入零售价格上限：");
+                maxRetailPrice = scanner.nextDouble();
+                scanner.nextLine(); // 清空输入缓冲区
+
+                for (String productInfo : productList) {
+                    String[] parts = productInfo.split(",");
+                    if (parts[1].equals(name) && parts[2].equals(manufacturer)) {
+                        double retailPrice = Double.parseDouble(parts[6]);
+                        if (retailPrice >= minRetailPrice && retailPrice <= maxRetailPrice) {
+                            searchResults.add(productInfo);
+                        }
+                    }
+                }
+
+                break;
+            default:
+                System.out.println("无效输入！");
+                return;
+        }
+
+        if (searchResults.isEmpty()) {
+            System.out.println("未找到符合条件的商品。");
+        } else {
+            System.out.println("查询结果：");
+            for (String productInfo : searchResults) {
+                System.out.println(productInfo);
+            }
+        }
     }
 }
