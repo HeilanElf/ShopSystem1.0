@@ -7,17 +7,20 @@ import java.util.Scanner;
 
 public class Master {
     private String basePath=System.getProperty("user.dir")+"//src//main//java//org//example//text//";
+    String signfilePath;
     Menu menu=new Menu();
     PasswordMaster passWordMaster=new PasswordMaster();
     UserMaster userMaster=new UserMaster();
     DuctionMaster ductionMaster=new DuctionMaster();
     Scanner scanner=new Scanner(System.in);
+    Regest regest=new Regest();
     IsTrueEnter isTrueEnter=new IsTrueEnter();
     public void passwordMaster(int command1){
-        String signfilePath;
+
         if(command1==1){
             signfilePath = basePath+"MasterData.txt";
-        }else{
+        }
+        if(command1==2){
             signfilePath =basePath+ "UserData.txt";
         }
         ArrayList<String[]> userInfoList = new ArrayList<>();
@@ -33,9 +36,7 @@ public class Master {
             System.out.println("系统错误: " + e.getMessage());
         }
         if(command1==1){
-
-            System.out.print("请确定用户名:");
-            String username=scanner.next();
+            String username=regest.getCurrentuserName();
             boolean find=false;
             for(String[] userInfo:userInfoList){
                 if(userInfo[0].equals(username)){
@@ -46,9 +47,10 @@ public class Master {
                 }
             }
             if(!find){
-                System.out.print("该管理员不存在！请联系主管添加。\n");
+                System.out.println("该管理员不存在！");
             }
-        }else{
+        }
+        if(command1==2){
             System.out.print("请确定用户名:");
             String username=scanner.next();
             boolean find=false;
@@ -59,27 +61,24 @@ public class Master {
                 }
             }
             if(!find){
-                System.out.print("该用户不存在！\n");
+                System.out.println("该用户不存在！");
             }
         }
     }
     public void userMaster(int command){
         if(command==1){
             userMaster.showUserData();
-            System.out.println("是否返回上一级菜单？请按任意键继续..");
-            Scanner scanner=new Scanner(System.in);
-            String xuanze=scanner.nextLine();
-
+            menu.next();
         }
         if(command==2){
             System.out.print("请输入要删除的用户ID：");
             String userID=scanner.next();
             userMaster.deleteUserData(userID);
-            menu.consoleDelay();
+            menu.next();
         }
         if(command==3){
             menu.showSearchStyle();
-            System.out.print("请选择您的查询方式：");
+            System.out.print("请选择输入您的选择：");
             int fangshi=isTrueEnter.inthefa(3);
             while(true){
                 if(fangshi==0){
@@ -90,19 +89,17 @@ public class Master {
                             System.out.print("请输入用户ID：");
                             String userID=scanner.next();
                             userMaster.searchUserData(userID,"ID");
-                            menu.consoleDelay();
                             break;
                         case 2:
                             System.out.print("请输入用户名：");
                             String username=scanner.next();
                             userMaster.searchUserData(username,"Name");
-                            menu.consoleDelay();
                             break;
                         case 3:
                             userMaster.showUserData();
-                            menu.consoleDelay();
                             break;
                     }
+                    menu.next();
                     menu.showSearchStyle();
                     System.out.print("请选择您的查询方式：");
                     fangshi=isTrueEnter.inthefa(3);
@@ -111,7 +108,6 @@ public class Master {
         }
     }
     public void ductionMaster(int command){
-
         if(command==1){
             ductionMaster.showDuctionInfo();
         }
@@ -122,12 +118,14 @@ public class Master {
             ductionMaster.modifyDuctionInfo();
         }
         if(command==4){
-            ductionMaster.deleteDuctionInfo();
+            System.out.print("请输入要删除的商品编号：");
+            String id = scanner.nextLine();
+            ductionMaster.deleteDuctionInfo(id);
         }
         if(command==5){
             ductionMaster.searchDuctionInfo();
         }
-        menu.consoleDelay();
+        menu.next();
     }
     public void master(int command){
         while(true){
@@ -144,7 +142,6 @@ public class Master {
                                 break;
                             }else{
                                 passwordMaster(command);
-                                menu.consoleDelay();
                             }
                         }
                         break;
@@ -157,7 +154,6 @@ public class Master {
                                 break;
                             }else{
                                 userMaster(command);
-                                menu.consoleDelay();
                             }
                         }
                         break;
@@ -170,7 +166,6 @@ public class Master {
                                 break;
                             }else{
                                 ductionMaster(command);
-                                menu.consoleDelay();
                             }
                         }
                         break;
@@ -481,9 +476,9 @@ class DuctionMaster{
     String basePath1=System.getProperty("user.dir")+"//src//main//java//org//example//text//";
     private  final String FILE_PATH=basePath1+"ductions.txt";
     Scanner scanner = new Scanner(System.in);
-    public List<String> readProductsFromFile() {
+    public List<String> readProductsFromFile(String filePath) {
         List<String> productList = new ArrayList<>();
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -517,7 +512,7 @@ class DuctionMaster{
         }
     }
     public void showDuctionInfo(){
-        List<String> productList = readProductsFromFile();
+        List<String> productList = readProductsFromFile(FILE_PATH);
 
         if (productList.isEmpty()) {
             System.out.println("没有商品信息。");
@@ -560,7 +555,7 @@ class DuctionMaster{
         System.out.print("请输入要修改的商品编号：");
         String id = scanner.nextLine();
 
-        List<String> productList = readProductsFromFile();
+        List<String> productList = readProductsFromFile(FILE_PATH);
         boolean found = false;
 
         for (int i = 0; i < productList.size(); i++) {
@@ -629,11 +624,8 @@ class DuctionMaster{
             System.out.println("未找到商品编号为 " + id + " 的商品。");
         }
     }
-    public void deleteDuctionInfo(){
-        System.out.print("请输入要删除的商品编号：");
-        String id = scanner.nextLine();
-
-        List<String> productList = readProductsFromFile();
+    public void deleteDuctionInfo(String id){
+        List<String> productList = readProductsFromFile(FILE_PATH);
         boolean found = false;
 
         for (int i = 0; i < productList.size(); i++) {
@@ -671,7 +663,7 @@ class DuctionMaster{
 
         System.out.print("请选择操作：");
         int choice = isTrueEnter.inthefa(4);
-        List<String> productList = readProductsFromFile();
+        List<String> productList = readProductsFromFile(FILE_PATH);
         List<String> searchResults = new ArrayList<>();
 
         switch (choice) {

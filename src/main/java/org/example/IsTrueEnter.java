@@ -10,7 +10,7 @@ public class IsTrueEnter {
         int command;
         while (true) {
             try {
-                command = Integer.parseInt(scanner.nextLine());
+                command = Integer.parseInt(scanner.next());
                 if (command >= 0 && command <= n) {
                     break;
                 } else {
@@ -23,7 +23,7 @@ public class IsTrueEnter {
         return command;
     }
     public String passwordhefa(String password) {
-        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d!@#$%^&*()_+]{8,}$";
         Pattern regex = Pattern.compile(pattern);
         Matcher matcher = regex.matcher(password);
 
@@ -34,7 +34,7 @@ public class IsTrueEnter {
                 System.out.print("密码必须包含大写字母，请重新输入：");
             } else if (!Pattern.compile(".*\\d.*").matcher(password).matches()) {
                 System.out.print("密码必须包含数字，请重新输入：");
-            } else if (!Pattern.compile(".*[@$!%*?&].*").matcher(password).matches()) {
+            } else if (!Pattern.compile(".*[!@#$%^&*()_+].*").matcher(password).matches()) {
                 System.out.print("密码必须包含特殊字符，请重新输入：");
             } else if (password.length() < 8) {
                 System.out.print("密码长度至少为8位，请重新输入：");
