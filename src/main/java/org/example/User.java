@@ -380,10 +380,10 @@ class ShopUser {
                     System.out.println("支付宝支付中！");
                     break;
                 case 2:
-                    System.out.println("支付宝支付中！");
+                    System.out.println("微信支付中！");
                     break;
                 case 3:
-                    System.out.println("支付宝支付中！");
+                    System.out.println("银行卡支付中！");
                     break;
             }
             if(updataInfo(xiaofei)){
