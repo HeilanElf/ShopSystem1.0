@@ -29,9 +29,10 @@ public class Menu {
             e.printStackTrace();
         }
     }
+    String xuanze;
     public void next(){
         System.out.println("请按任意键继续..");
-        String xuanze=scanner.nextLine();
+        xuanze=scanner.nextLine();
     }
     private void showFileContent(String fileName) {
         clear();
