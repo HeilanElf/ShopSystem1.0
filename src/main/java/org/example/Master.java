@@ -178,6 +178,7 @@ public class Master {
     }
 }
 class PasswordMaster{
+    Scanner scanner=new Scanner(System.in);
     LogIn logIn=new LogIn();
     public  void modifyUserInfo(String filePath, String username, String newPassword) {
         String enterpassword=logIn.encryptPassword(newPassword);
@@ -240,7 +241,7 @@ class PasswordMaster{
     }
 }
 class UserMaster{
-
+    Scanner scanner=new Scanner(System.in);
     public void showUserData(){
         String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
         File folder = new File(folderPath);
@@ -333,7 +334,7 @@ class UserMaster{
         String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
         String filePath=System.getProperty("user.dir")+"//src//main//java//org//example//text//UserData.txt";
         File folder = new File(folderPath);
-        Scanner scanner=new Scanner(System.in);
+       
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles(); // 获取文件夹下所有文件
             if (files == null) {
@@ -367,7 +368,6 @@ class UserMaster{
     public void searchID(String key){
         String userID=key+".txt";
         String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
-        String filePath=folderPath+userID;
         File folder = new File(folderPath);
         boolean find=false;
         if (folder.exists() && folder.isDirectory()) {

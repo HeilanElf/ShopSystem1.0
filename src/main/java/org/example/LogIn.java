@@ -178,7 +178,8 @@ public class LogIn {
     }
 }
 class Regest{
-    private final String DATA_FOLDER=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+    Scanner scanner = new Scanner(System.in);
+    private final String DATA_FOLDER=System.getProperty("user.dir")+"//src//main//java//org//example//userData//";
     private long idCounter=1;
     public void userRegest(String userName){
         String phoneNumber = getInput("请输入手机号：");
@@ -191,10 +192,10 @@ class Regest{
         createDataFolder();
 
         // 检查 userData 文件夹下是否存在重名的文件
-        File file = new File(DATA_FOLDER + "\\" + userID + ".txt");
+        File file = new File(DATA_FOLDER  + userID + ".txt");
         while (file.exists()) {
             userID = createUserID();
-            file = new File(DATA_FOLDER + "\\" + userID + ".txt");
+            file = new File(DATA_FOLDER  + userID + ".txt");
         }
 
         try {
@@ -210,7 +211,7 @@ class Regest{
         }
     }
     private  String getInput(String prompt) {
-        Scanner scanner = new Scanner(System.in);
+        
         System.out.print(prompt);
         return scanner.nextLine().trim();
     }

@@ -203,7 +203,7 @@ class PasswordUser{
             }
             for (File file : files) {
                 if (file.isFile() &&file.getName().toLowerCase().endsWith(".txt")) { // 判断文件名是否匹配
-                    String fileName=file.getName();
+                    //String fileName=file.getName();
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line = reader.readLine();
                         if (line != null) {
@@ -508,7 +508,7 @@ class ShopUser {
          Regest regest=new Regest();
          return regest.getCurrentuserName()+".txt";
     }
-    private final  String userFolder=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+    private final  String userFolder=System.getProperty("user.dir")+"//src//main//java//org//example//userData//";
 
     public boolean updateUserInfo(String currentUserName, double price) {
         String file=searchFile(userFolder,currentUserName);
