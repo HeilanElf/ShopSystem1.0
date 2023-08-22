@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 import java.util.Scanner;
 
 public class LogIn {
@@ -80,6 +81,13 @@ public class LogIn {
             return false;
         }
     }
+    public boolean checkIfTxtFileExists(String folderPath, String fileName) {
+        File file=new File(folderPath+fileName+".txt");
+        if(file.exists()){
+            return true;
+        }
+        return false;
+    }
     public boolean isMatch(String filePath, String name, String password) {
         String encryptedPassword = encryptPassword(password);
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -133,11 +141,14 @@ public class LogIn {
             }else{
                 while (!isMatch(filePath, userName, password) && count < 5) {
                     count++;
+                    if(count<5&&count>3){
+                        System.out.print("您已多次失败！再有三次错误账户即将被锁定！");
+                    }
                         System.out.println("管理员不存在或密码错误！");
                         System.out.print("用户名：");
                         userName = scanner.next();
                         System.out.print("密码：");
-                        password = isTrueEnter.passwordhefa(scanner.next());
+                        password = scanner.next();
                 }
                 regest.setCurrentUserName(userName);
             }
@@ -153,19 +164,23 @@ public class LogIn {
                 System.out.println("用户不存在！");
                 count=5;
             }else {
-                while (!isMatch(filePath, userName, password) && count < 5) {
+                while (!isMatch(filePath, userName, password) && count < 6) {
                     count++;
+                    if(count<5&&count>3){
+                        System.out.print("您已多次失败！再有三次错误账户即将被锁定！");
+                    }
                         System.out.println("用户名或密码错误！");
                         System.out.print("用户名：");
                         userName = scanner.next();
                         System.out.print("密码：");
                         password = isTrueEnter.passwordhefa(scanner.next());
+
                 }
                 regest.setCurrentUserName(userName);
             }
         }
         if (count > 5) {
-            System.out.println("由于您多次失败，请三小时后再试！");
+            System.out.println("由于您多次失败，您的账户已被锁定，请三小时后再试！");
             Menu menu=new Menu();
             long yanchi=1000*60*60*3;
             menu.consoleDelay(yanchi);
@@ -178,8 +193,7 @@ public class LogIn {
     }
 }
 class Regest{
-    private final String DATA_FOLDER=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
-    private long idCounter=1;
+    private final String DATA_FOLDER=System.getProperty("user.dir")+"//src//main//java//org//example//userData//";
     public void userRegest(String userName){
         String phoneNumber = getInput("请输入手机号：");
         String email = getInput("请输入邮箱：");
@@ -191,10 +205,10 @@ class Regest{
         createDataFolder();
 
         // 检查 userData 文件夹下是否存在重名的文件
-        File file = new File(DATA_FOLDER + "\\" + userID + ".txt");
+        File file = new File(DATA_FOLDER  + userID + ".txt");
         while (file.exists()) {
             userID = createUserID();
-            file = new File(DATA_FOLDER + "\\" + userID + ".txt");
+            file = new File(DATA_FOLDER  + userID + ".txt");
         }
 
         try {
@@ -216,7 +230,23 @@ class Regest{
     }
 
     private  String createUserID() {
-        return String.format("%04d", idCounter++);
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        // 生成随机的大写字母作为开头
+        sb.append((char) (random.nextInt(26) + 'A'));
+
+        // 生成随机的数字和大写字母作为后续字符
+        for (int i = 0; i < 5; i++) {
+            int randomNum = random.nextInt(36); // 生成0-35之间的随机数
+            if (randomNum < 10) {
+                sb.append(randomNum); // 0-9为数字
+            } else {
+                sb.append((char) (randomNum - 10 + 'A')); // 10-35为大写字母
+            }
+        }
+
+        return sb.toString();
     }
 
     private  void createDataFolder() {

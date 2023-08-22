@@ -23,7 +23,7 @@ public class IsTrueEnter {
         return command;
     }
     public String passwordhefa(String password) {
-        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d!@#$%^&*()_+]{8,}$";
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d!@#$%^&*()_+]{8,}$";
         Pattern regex = Pattern.compile(pattern);
         Matcher matcher = regex.matcher(password);
 

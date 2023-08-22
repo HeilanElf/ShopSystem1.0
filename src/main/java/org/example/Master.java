@@ -7,8 +7,10 @@ import java.util.Scanner;
 
 public class Master {
     private String basePath=System.getProperty("user.dir")+"//src//main//java//org//example//text//";
+    private String foderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData//";
     String signfilePath;
     Menu menu=new Menu();
+    LogIn logIn=new LogIn();
     PasswordMaster passWordMaster=new PasswordMaster();
     UserMaster userMaster=new UserMaster();
     DuctionMaster ductionMaster=new DuctionMaster();
@@ -42,6 +44,15 @@ public class Master {
                 if(userInfo[0].equals(username)){
                     System.out.print("请输入新密码：");
                     String newPassword=scanner.next();
+                    System.out.print("请确定新密码：");
+                    String newPassword1=scanner.next();
+                    while(!newPassword1.equals(newPassword)){
+                        System.out.println("密码不一致！");
+                        System.out.print("请输入新密码：");
+                        newPassword=scanner.next();
+                        System.out.print("请确定新密码：");
+                        newPassword1=scanner.next();
+                    }
                     passWordMaster.modifyUserInfo(signfilePath,userInfo[0],newPassword);
                     find=true;
                 }
@@ -56,7 +67,7 @@ public class Master {
             boolean find=false;
             for(String[] userInfo:userInfoList){
                 if(userInfo[0].equals(username)) {
-                    passWordMaster.resetUserInfo(signfilePath, userInfoList.get(0)[0]);
+                    passWordMaster.resetUserInfo(signfilePath, userInfo[0]);
                     find=true;
                 }
             }
@@ -73,7 +84,12 @@ public class Master {
         if(command==2){
             System.out.print("请输入要删除的用户ID：");
             String userID=scanner.next();
-            userMaster.deleteUserData(userID);
+            if(!logIn.checkIfTxtFileExists(foderPath,userID)){
+                System.out.print("该用户不存在！");
+            }else{
+                userMaster.deleteUserData(userID);
+            }
+
             menu.next();
         }
         if(command==3){
@@ -220,7 +236,8 @@ class PasswordMaster{
                 String fileUsername = userInfo[0];
 
                 if (fileUsername.equals(username)) {
-                    line = fileUsername + ",,";
+                    String resetPassword=logIn.encryptPassword("@SPGL1234system");
+                    line = fileUsername + ","+resetPassword+",";
                 }
 
                 fileContentBuilder.append(line).append(System.lineSeparator());
@@ -328,9 +345,11 @@ class UserMaster{
             System.out.println("系统错误！");
         }
     }
-    public void deleteUserData(String userID){
+    public boolean deleteUserData(String userID){
         String userID1=userID+".txt";
         String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";
+        String folderPath1=System.getProperty("user.dir")+"//src//main//java//org//example//DuctionData";
+
         String filePath=System.getProperty("user.dir")+"//src//main//java//org//example//text//UserData.txt";
         File folder = new File(folderPath);
         Scanner scanner=new Scanner(System.in);
@@ -338,7 +357,7 @@ class UserMaster{
             File[] files = folder.listFiles(); // 获取文件夹下所有文件
             if (files == null) {
                 System.out.println("用户列表为空！");
-                return;
+                return false;
             }
             for (File file : files) {
                 if (file.isFile() && file.getName().equals(userID1)) { // 判断文件名是否匹配
@@ -348,22 +367,45 @@ class UserMaster{
                     String confirmation = scanner.next();
                     if(confirmation.equalsIgnoreCase("Y")){
                         deleteLineByUsername(filePath,userName);
+                        deleteFileByUserName(folderPath1,userName);
                         if (file.delete()) { // 删除文件
                             System.out.println("已删除ID为:"+userID+"的用户！");
+                            return true;
                         } else {
                             System.out.println("删除失败！");
+                            return false;
                         }
                     }else{
                         System.out.println("已取消删除！");
-                        return;
+                        return false;
                     }
                 }
             }
         } else {
             System.out.println("文件夹不存在！");
+            return false;
         }
-
+        return false;
     }
+
+    private boolean deleteFileByUserName(String folderPath1, String userName) {
+        File folder = new File(folderPath1);
+        File[] files = folder.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().equals(userName)) {
+                    if (file.delete()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public void searchID(String key){
         String userID=key+".txt";
         String folderPath=System.getProperty("user.dir")+"//src//main//java//org//example//userData";

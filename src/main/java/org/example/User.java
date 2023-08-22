@@ -21,9 +21,18 @@ public class User {
             String userName=regest.getCurrentuserName();
             System.out.print("请确认旧密码：");
             String passwordOld= isTrueEnter.passwordhefa(scanner.next());
-            System.out.print("请输入新密码：");
-            String passwordNew= isTrueEnter.passwordhefa(scanner.next());
             if(logIn.isMatch(filePath,userName,passwordOld)){
+                System.out.print("请输入新密码：");
+                String passwordNew= isTrueEnter.passwordhefa(scanner.next());
+                System.out.print("请确认新密码：");
+                String passwordNew1= isTrueEnter.passwordhefa(scanner.next());
+                while(!passwordNew1.equals(passwordNew)){
+                    System.out.println("密码不一致！");
+                    System.out.print("请输入新密码：");
+                    passwordNew= isTrueEnter.passwordhefa(scanner.next());
+                    System.out.print("请确认新密码：");
+                    passwordNew1= isTrueEnter.passwordhefa(scanner.next());
+                }
                 passwordUser.fixPassword(filePath,userName,passwordNew);
             }else{
                 System.out.println("密码不匹配！");
@@ -102,6 +111,7 @@ public class User {
                             }else{
                                exit=passwordUser(command);
                                 if(exit==0){
+                                    command=0;
                                     break;
                                 }
                             }
@@ -122,6 +132,7 @@ public class User {
                             }else{
                                 exit=shopUser(command);
                                 if(exit==0){
+                                    command=0;
                                     break;
                                 }
                             }
@@ -303,10 +314,6 @@ class ShopUser {
             String productInfo = productList.get(i);
             String[] parts = productInfo.split(",");
             if (parts[0].equals(id)) {
-                String output="商品编号: " + parts[0]+" 商品名称: " + parts[1]+" 生产厂家: " + parts[2]+" 加入购物车时间: " + parts[3]+
-                        " 型号: " + parts[4]+" 零售价格: " + parts[5]+" 数量: " + parts[6];
-                System.out.println("商品信息：" + output);
-
                 System.out.print("确认要删除该商品吗？（Y/N）：");
                 String confirmation = scanner.nextLine();
                 if (confirmation.equalsIgnoreCase("Y")) {
@@ -380,10 +387,10 @@ class ShopUser {
                     System.out.println("支付宝支付中！");
                     break;
                 case 2:
-                    System.out.println("支付宝支付中！");
+                    System.out.println("微信支付中！");
                     break;
                 case 3:
-                    System.out.println("支付宝支付中！");
+                    System.out.println("银行卡支付中！");
                     break;
             }
             if(updataInfo(xiaofei)){
@@ -473,8 +480,6 @@ class ShopUser {
             BufferedWriter stockWriter = new BufferedWriter(new FileWriter(stockFilePath));
             stockWriter.write(updatedStockData.toString());
             stockWriter.close();
-
-            System.out.println("商品库存信息更新成功。");
         } catch (IOException e) {
             System.out.println("发生错误：" + e.getMessage());
         }
@@ -613,9 +618,9 @@ class ShopUser {
         String file_path=DATA_FOLDER+createFile();
         List<String> productList = ductionMaster.readProductsFromFile(file_path);
         if (productList.isEmpty()) {
-            System.out.println("当前购物车为空！");
+            System.out.println("历史信息为空！");
         } else {
-            System.out.println("当前购物车商品信息：");
+            System.out.println("购物历史信息如下：");
             for (String productInfo : productList) {
                 String[] parts = productInfo.split(",");
                 String output="商品编号: " + parts[0]+" 商品名称: " + parts[1]+" 生产厂家: " + parts[2]+" 加入购物车时间: " + parts[3]+
