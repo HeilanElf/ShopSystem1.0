@@ -32,7 +32,7 @@ public class Menu {
     public void next(){
         System.out.println("请按任意键继续..");
         Scanner scanner=new Scanner(System.in);
-        xuanze=scanner.nextLine();
+        String xuanze=scanner.nextLine();
     }
     private void showFileContent(String fileName) {
         clear();
